@@ -20,17 +20,14 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _abrirDetalle(Producto producto) async {
     final resultado = await Navigator.push<String>(
       context,
-      MaterialPageRoute(
-        builder: (context) => DetalleScreen(producto: producto),
-      ),
+      MaterialPageRoute(builder: (context) => DetalleScreen(producto: producto)),
     );
 
     if (!mounted || resultado == null) return;
 
     setState(() => _ultimoPedido = resultado);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Pedido registrado: $resultado')),
-    );
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text('Pedido registrado: $resultado')));
   }
 
   @override
@@ -40,7 +37,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Café Aroma'),
+        title: const Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.local_cafe),
+            SizedBox(width: 8),
+            Text('Café Aroma', style: TextStyle(fontWeight: FontWeight.bold)),
+          ],
+        ),
         centerTitle: true,
         backgroundColor: colores.primaryContainer,
       ),

@@ -29,7 +29,8 @@ class _DetalleScreenState extends State<DetalleScreen> {
     if (!_formKey.currentState!.validate()) return;
 
     final total = widget.producto.precio * _cantidad;
-    final resumen = '${_nombreController.text.trim()} pidió $_cantidad x '
+    final resumen =
+        '${_nombreController.text.trim()} pidió $_cantidad x '
         '${widget.producto.nombre} ($_tamano) - Total \$${total.toStringAsFixed(2)}';
 
     Navigator.pop(context, resumen);
@@ -43,10 +44,7 @@ class _DetalleScreenState extends State<DetalleScreen> {
     final total = producto.precio * _cantidad;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(producto.nombre),
-        backgroundColor: colores.primaryContainer,
-      ),
+      appBar: AppBar(title: Text(producto.nombre), backgroundColor: colores.primaryContainer),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -68,10 +66,7 @@ class _DetalleScreenState extends State<DetalleScreen> {
             Center(
               child: Container(
                 padding: const EdgeInsets.all(24),
-                decoration: BoxDecoration(
-                  color: colores.primaryContainer,
-                  shape: BoxShape.circle,
-                ),
+                decoration: BoxDecoration(color: colores.primaryContainer, shape: BoxShape.circle),
                 child: Icon(producto.icono, size: 64, color: colores.onPrimaryContainer),
               ),
             ),

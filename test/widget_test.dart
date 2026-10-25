@@ -12,7 +12,9 @@ void main() {
     expect(find.text('Capuchino'), findsOneWidget);
   });
 
-  testWidgets('Navega al detalle con el producto y regresa con el pedido', (WidgetTester tester) async {
+  testWidgets('Navega al detalle con el producto y regresa con el pedido', (
+    WidgetTester tester,
+  ) async {
     tester.view.physicalSize = const Size(1080, 2400);
     tester.view.devicePixelRatio = 2.5;
     addTearDown(tester.view.reset);
