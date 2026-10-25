@@ -1,0 +1,127 @@
+import 'package:flutter/material.dart';
+
+import '../models/producto.dart';
+
+/// Pantalla 2: detalle del producto y formulario para pedirlo.
+class DetalleScreen extends StatefulWidget {
+  final Producto producto;
+
+  const DetalleScreen({super.key, required this.producto});
+
+  @override
+  State<DetalleScreen> createState() => _DetalleScreenState();
+}
+
+class _DetalleScreenState extends State<DetalleScreen> {
+  final _formKey = GlobalKey<FormState>();
+  final _nombreController = TextEditingController();
+  int _cantidad = 1;
+  String _tamano = 'Mediano';
+
+  @override
+  void dispose() {
+    _nombreController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final producto = widget.producto;
+    final colores = Theme.of(context).colorScheme;
+    final textos = Theme.of(context).textTheme;
+    final total = producto.precio * _cantidad;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(producto.nombre),
+        backgroundColor: colores.primaryContainer,
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  color: colores.primaryContainer,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(producto.icono, size: 64, color: colores.onPrimaryContainer),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(producto.nombre, style: textos.headlineSmall),
+            Text(producto.categoria, style: textos.labelLarge?.copyWith(color: colores.secondary)),
+            const SizedBox(height: 8),
+            Text(producto.descripcion),
+            const SizedBox(height: 8),
+            Text(
+              'Precio: \$${producto.precio.toStringAsFixed(2)}',
+              style: textos.titleMedium?.copyWith(color: colores.primary),
+            ),
+            const Divider(height: 32),
+            Text('Haz tu pedido', style: textos.titleLarge),
+            const SizedBox(height: 12),
+            Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  TextFormField(
+                    controller: _nombreController,
+                    decoration: const InputDecoration(
+                      labelText: 'Tu nombre',
+                      prefixIcon: Icon(Icons.person),
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (valor) {
+                      if (valor == null || valor.trim().isEmpty) {
+                        return 'Escribe tu nombre para el pedido';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 12),
+                  DropdownButtonFormField<String>(
+                    initialValue: _tamano,
+                    decoration: const InputDecoration(
+                      labelText: 'Tamaño',
+                      border: OutlineInputBorder(),
+                    ),
+                    items: const [
+                      DropdownMenuItem(value: 'Pequeño', child: Text('Pequeño')),
+                      DropdownMenuItem(value: 'Mediano', child: Text('Mediano')),
+                      DropdownMenuItem(value: 'Grande', child: Text('Grande')),
+                    ],
+                    onChanged: (valor) => setState(() => _tamano = valor!),
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      const Text('Cantidad'),
+                      const Spacer(),
+                      IconButton(
+                        tooltip: 'Quitar uno',
+                        onPressed: _cantidad > 1 ? () => setState(() => _cantidad--) : null,
+                        icon: const Icon(Icons.remove_circle_outline),
+                      ),
+                      Text('$_cantidad', style: textos.titleMedium),
+                      IconButton(
+                        tooltip: 'Agregar uno',
+                        onPressed: () => setState(() => _cantidad++),
+                        icon: const Icon(Icons.add_circle_outline),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text('Total: \$${total.toStringAsFixed(2)}', style: textos.titleLarge),
+          ],
+        ),
+      ),
+    );
+  }
+}

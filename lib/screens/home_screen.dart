@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../models/producto.dart';
 import '../widgets/info_chip.dart';
 import '../widgets/producto_card.dart';
 
@@ -56,27 +57,14 @@ class HomeScreen extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
             child: Text('Nuestro menú', style: textos.titleLarge),
           ),
-          ProductoCard(
-            nombre: 'Café americano',
-            descripcion: 'Café negro preparado con granos tostados de la casa.',
-            precio: 1.50,
-            icono: Icons.coffee,
-            onVerDetalle: () => _proximamente(context),
-          ),
-          ProductoCard(
-            nombre: 'Capuchino',
-            descripcion: 'Espresso con leche vaporizada y espuma cremosa.',
-            precio: 2.50,
-            icono: Icons.coffee_maker,
-            onVerDetalle: () => _proximamente(context),
-          ),
-          ProductoCard(
-            nombre: 'Cheesecake de fresa',
-            descripcion: 'Porción de cheesecake con salsa de fresa natural.',
-            precio: 3.25,
-            icono: Icons.cake,
-            onVerDetalle: () => _proximamente(context),
-          ),
+          for (final producto in catalogo)
+            ProductoCard(
+              nombre: producto.nombre,
+              descripcion: producto.descripcion,
+              precio: producto.precio,
+              icono: producto.icono,
+              onVerDetalle: () => _proximamente(context),
+            ),
           const SizedBox(height: 16),
         ],
       ),
