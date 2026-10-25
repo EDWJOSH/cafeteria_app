@@ -3,26 +3,46 @@ import 'package:flutter/material.dart';
 import '../models/producto.dart';
 import '../widgets/info_chip.dart';
 import '../widgets/producto_card.dart';
+import 'detalle_screen.dart';
 
 /// Pantalla 1: muestra el banner, la información del local y el menú.
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
-  void _proximamente(BuildContext context) {
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  String? _ultimoPedido;
+
+  /// Abre la Pantalla 2 enviando el producto elegido y espera la respuesta.
+  Future<void> _abrirDetalle(Producto producto) async {
+    final resultado = await Navigator.push<String>(
+      context,
+      MaterialPageRoute(
+        builder: (context) => DetalleScreen(producto: producto),
+      ),
+    );
+
+    if (!mounted || resultado == null) return;
+
+    setState(() => _ultimoPedido = resultado);
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('El detalle estará disponible pronto')),
+      SnackBar(content: Text('Pedido registrado: $resultado')),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     final textos = Theme.of(context).textTheme;
+    final colores = Theme.of(context).colorScheme;
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Café Aroma'),
         centerTitle: true,
-        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+        backgroundColor: colores.primaryContainer,
       ),
       body: ListView(
         children: [
@@ -53,6 +73,16 @@ class HomeScreen extends StatelessWidget {
               ],
             ),
           ),
+          if (_ultimoPedido != null)
+            Card(
+              margin: const EdgeInsets.symmetric(horizontal: 16),
+              color: colores.tertiaryContainer,
+              child: ListTile(
+                leading: const Icon(Icons.receipt_long),
+                title: const Text('Último pedido'),
+                subtitle: Text(_ultimoPedido!),
+              ),
+            ),
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
             child: Text('Nuestro menú', style: textos.titleLarge),
@@ -63,7 +93,7 @@ class HomeScreen extends StatelessWidget {
               descripcion: producto.descripcion,
               precio: producto.precio,
               icono: producto.icono,
-              onVerDetalle: () => _proximamente(context),
+              onVerDetalle: () => _abrirDetalle(producto),
             ),
           const SizedBox(height: 16),
         ],

@@ -24,6 +24,17 @@ class _DetalleScreenState extends State<DetalleScreen> {
     super.dispose();
   }
 
+  /// Valida el formulario y regresa a la Pantalla 1 con el resumen del pedido.
+  void _confirmarPedido() {
+    if (!_formKey.currentState!.validate()) return;
+
+    final total = widget.producto.precio * _cantidad;
+    final resumen = '${_nombreController.text.trim()} pidió $_cantidad x '
+        '${widget.producto.nombre} ($_tamano) - Total \$${total.toStringAsFixed(2)}';
+
+    Navigator.pop(context, resumen);
+  }
+
   @override
   Widget build(BuildContext context) {
     final producto = widget.producto;
@@ -41,6 +52,19 @@ class _DetalleScreenState extends State<DetalleScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Container(
+              width: double.infinity,
+              margin: const EdgeInsets.only(bottom: 16),
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: colores.tertiaryContainer,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                'Parámetro recibido desde Home: producto #${producto.id} - ${producto.nombre}',
+                style: TextStyle(color: colores.onTertiaryContainer),
+              ),
+            ),
             Center(
               child: Container(
                 padding: const EdgeInsets.all(24),
@@ -119,6 +143,23 @@ class _DetalleScreenState extends State<DetalleScreen> {
             ),
             const SizedBox(height: 8),
             Text('Total: \$${total.toStringAsFixed(2)}', style: textos.titleLarge),
+            const SizedBox(height: 16),
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton.icon(
+                onPressed: _confirmarPedido,
+                icon: const Icon(Icons.check),
+                label: const Text('Confirmar pedido'),
+              ),
+            ),
+            const SizedBox(height: 8),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Volver al menú'),
+              ),
+            ),
           ],
         ),
       ),
