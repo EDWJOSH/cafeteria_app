@@ -1,6 +1,6 @@
 {
-    "name": "cafeteria_app",
-    "short_name": "cafeteria_app",
+    "name": "Grano & Co.",
+    "short_name": "Grano & Co.",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
