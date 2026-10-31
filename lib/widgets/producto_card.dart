@@ -45,9 +45,18 @@ class ProductoCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(nombre, style: textos.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                    Text(
+                      nombre,
+                      style: textos.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                     const SizedBox(height: 4),
-                    Text(descripcion, maxLines: 2, overflow: TextOverflow.ellipsis),
+                    Text(
+                      descripcion,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                     const SizedBox(height: 4),
                     Text(
                       '\$${precio.toStringAsFixed(2)}',
