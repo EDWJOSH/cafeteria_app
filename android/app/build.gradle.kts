@@ -6,7 +6,8 @@ plugins {
 
 android {
     namespace = "com.edwinquiroz.granoco"
-    compileSdk = flutter.compileSdkVersion
+    // permission_handler 13 exige compilar contra la API 37
+    compileSdk = 37
     ndkVersion = flutter.ndkVersion
 
     compileOptions {

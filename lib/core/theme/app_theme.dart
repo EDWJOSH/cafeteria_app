@@ -69,6 +69,7 @@ class AppTheme {
           foregroundColor: AppColors.blanco,
         ),
       ),
+      dialogTheme: const DialogThemeData(backgroundColor: AppColors.blanco),
       snackBarTheme: const SnackBarThemeData(
         backgroundColor: AppColors.espresso,
         contentTextStyle: TextStyle(color: AppColors.crema),
