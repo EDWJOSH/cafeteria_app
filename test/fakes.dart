@@ -5,6 +5,8 @@ import 'package:grano_co/data/catalogo_repository.dart';
 import 'package:grano_co/main.dart';
 import 'package:grano_co/services/cache_service.dart';
 import 'package:grano_co/services/connectivity_service.dart';
+import 'package:grano_co/services/media_service.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -26,6 +28,23 @@ class FakeConnectivityService extends ConnectivityService {
     estado = nuevo;
     _controller.add(nuevo);
   }
+}
+
+/// Media falso: simula la respuesta del usuario al diálogo de permisos.
+class FakeMediaService extends MediaService {
+  EstadoPermiso respuesta;
+  bool ajustesAbiertos = false;
+
+  FakeMediaService([this.respuesta = EstadoPermiso.concedido]);
+
+  @override
+  Future<EstadoPermiso> solicitarPermiso(ImageSource fuente) async => respuesta;
+
+  @override
+  Future<ResultadoImagen?> obtenerFoto(ImageSource fuente) async => null;
+
+  @override
+  Future<bool> abrirAjustes() async => ajustesAbiertos = true;
 }
 
 /// Respuesta del "servidor": el catálogo remoto trae el Cold brew (id 6).
@@ -52,13 +71,15 @@ http.Client clienteFalso() => MockClient((request) async {
 });
 
 Future<Servicios> serviciosDePrueba(
-  FakeConnectivityService conectividad,
-) async {
+  FakeConnectivityService conectividad, {
+  MediaService? media,
+}) async {
   SharedPreferences.setMockInitialValues({});
   final cache = CacheService(await SharedPreferences.getInstance());
   return Servicios(
     cache: cache,
     conectividad: conectividad,
     catalogo: CatalogoRepository(cache, cliente: clienteFalso()),
+    media: media ?? FakeMediaService(),
   );
 }

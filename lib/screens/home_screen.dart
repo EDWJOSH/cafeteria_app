@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../core/theme/app_theme.dart';
 import '../core/utils/formato.dart';
 import '../data/catalogo_repository.dart';
 import '../models/producto.dart';
 import '../providers/catalogo_provider.dart';
+import '../providers/perfil_provider.dart';
 import '../widgets/info_chip.dart';
 import '../widgets/offline_banner.dart';
 import '../widgets/producto_card.dart';
 import 'detalle_screen.dart';
+import 'perfil_screen.dart';
 
 /// Pantalla 1: muestra el banner, la información del local y el menú.
 class HomeScreen extends StatefulWidget {
@@ -55,6 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final textos = Theme.of(context).textTheme;
     final colores = Theme.of(context).colorScheme;
     final catalogo = context.watch<CatalogoProvider>();
+    final foto = context.watch<PerfilProvider>().foto;
 
     return Scaffold(
       appBar: AppBar(
@@ -66,6 +70,25 @@ class _HomeScreenState extends State<HomeScreen> {
             Text('Grano & Co.'),
           ],
         ),
+        actions: [
+          IconButton(
+            tooltip: 'Mi perfil',
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const PerfilScreen()),
+            ),
+            icon: CircleAvatar(
+              radius: 16,
+              backgroundColor: AppColors.arena,
+              foregroundImage: foto != null ? FileImage(foto) : null,
+              child: const Icon(
+                Icons.person,
+                size: 20,
+                color: AppColors.espresso,
+              ),
+            ),
+          ),
+        ],
       ),
       body: Column(
         children: [

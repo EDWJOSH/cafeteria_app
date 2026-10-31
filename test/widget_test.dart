@@ -2,18 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:grano_co/main.dart';
 import 'package:grano_co/services/connectivity_service.dart';
+import 'package:grano_co/services/media_service.dart';
 
 import 'fakes.dart';
 
 void main() {
   Future<void> abrirApp(
     WidgetTester tester,
-    FakeConnectivityService red,
-  ) async {
+    FakeConnectivityService red, {
+    MediaService? media,
+  }) async {
     tester.view.physicalSize = const Size(1080, 2400);
     tester.view.devicePixelRatio = 2.5;
     addTearDown(tester.view.reset);
-    final servicios = await serviciosDePrueba(red);
+    final servicios = await serviciosDePrueba(red, media: media);
     await tester.pumpWidget(GranoApp(servicios: servicios));
     await tester.pumpAndSettle();
   }
@@ -95,6 +97,46 @@ void main() {
     expect(find.text('Último pedido'), findsOneWidget);
     expect(
       find.text('Edwin pidió 2 x Capuchino (Mediano) - Total \$5.00'),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('Permiso de cámara bloqueado: ofrece abrir los ajustes', (
+    tester,
+  ) async {
+    final media = FakeMediaService(EstadoPermiso.denegadoPermanente);
+    await abrirApp(
+      tester,
+      FakeConnectivityService(EstadoRed.enLinea),
+      media: media,
+    );
+
+    await tester.tap(find.byTooltip('Mi perfil'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Tomar foto'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Permiso de cámara bloqueado'), findsOneWidget);
+    await tester.tap(find.text('Abrir ajustes'));
+    await tester.pumpAndSettle();
+    expect(media.ajustesAbiertos, isTrue);
+  });
+
+  testWidgets('Permiso de cámara denegado: muestra un aviso', (tester) async {
+    final media = FakeMediaService(EstadoPermiso.denegado);
+    await abrirApp(
+      tester,
+      FakeConnectivityService(EstadoRed.enLinea),
+      media: media,
+    );
+
+    await tester.tap(find.byTooltip('Mi perfil'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Tomar foto'));
+    await tester.pump();
+
+    expect(
+      find.textContaining('Sin permiso no podemos usar la cámara'),
       findsOneWidget,
     );
   });
