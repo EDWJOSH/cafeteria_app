@@ -6,6 +6,8 @@ con rebranding completo y un módulo de servicios nativos.
 
 Actividad Integradora 2 — Desarrollo de Aplicaciones Móviles · Universidad Ecotec
 
+📄 **Informe técnico:** [docs/Quiroz_Edwin_ActividadIntegradora2.pdf](docs/Quiroz_Edwin_ActividadIntegradora2.pdf)
+
 | Splash | Home | Sin conexión | Permiso bloqueado | Foto de perfil | Notificación |
 |---|---|---|---|---|---|
 | ![](docs/capturas/splash.jpg) | ![](docs/capturas/home.jpg) | ![](docs/capturas/offline.jpg) | ![](docs/capturas/permiso_bloqueado.jpg) | ![](docs/capturas/foto_perfil.jpg) | ![](docs/capturas/notificacion_pedido.jpg) |
