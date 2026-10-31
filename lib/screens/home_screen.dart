@@ -5,7 +5,9 @@ import '../core/theme/app_theme.dart';
 import '../core/utils/formato.dart';
 import '../data/catalogo_repository.dart';
 import '../models/producto.dart';
+import '../main.dart';
 import '../providers/catalogo_provider.dart';
+import '../providers/pedido_provider.dart';
 import '../providers/perfil_provider.dart';
 import '../widgets/info_chip.dart';
 import '../widgets/offline_banner.dart';
@@ -22,7 +24,14 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  String? _ultimoPedido;
+  @override
+  void initState() {
+    super.initState();
+    // Android 13+ pide permiso para notificar; se solicita al abrir la app.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<Servicios>().notificaciones.solicitarPermiso();
+    });
+  }
 
   /// Abre la Pantalla 2 enviando el producto elegido y espera la respuesta.
   Future<void> _abrirDetalle(Producto producto) async {
@@ -35,9 +44,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
     if (!mounted || resultado == null) return;
 
-    setState(() => _ultimoPedido = resultado);
+    final pedidos = context.read<PedidoProvider>();
     ScaffoldMessenger.of(context)
         .showSnackBar(SnackBar(content: Text('Pedido registrado: $resultado')));
+    await pedidos.registrar(resultado);
   }
 
   /// Explica al usuario de dónde vienen los productos que está viendo.
@@ -59,6 +69,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final colores = Theme.of(context).colorScheme;
     final catalogo = context.watch<CatalogoProvider>();
     final foto = context.watch<PerfilProvider>().foto;
+    final ultimoPedido = context.watch<PedidoProvider>().ultimoPedido;
 
     return Scaffold(
       appBar: AppBar(
@@ -136,14 +147,14 @@ class _HomeScreenState extends State<HomeScreen> {
                       ],
                     ),
                   ),
-                  if (_ultimoPedido != null)
+                  if (ultimoPedido != null)
                     Card(
                       margin: const EdgeInsets.symmetric(horizontal: 16),
                       color: colores.tertiaryContainer,
                       child: ListTile(
                         leading: const Icon(Icons.receipt_long),
                         title: const Text('Último pedido'),
-                        subtitle: Text(_ultimoPedido!),
+                        subtitle: Text(ultimoPedido),
                       ),
                     ),
                   Padding(

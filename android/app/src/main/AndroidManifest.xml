@@ -5,6 +5,8 @@
     <!-- Cámara: permiso en tiempo de ejecución para la foto de perfil -->
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-feature android:name="android.hardware.camera" android:required="false"/>
+    <!-- Notificaciones locales: permiso en tiempo de ejecución desde Android 13 -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <application
         android:label="Grano &amp; Co."
         android:name="${applicationName}"
