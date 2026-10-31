@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:grano_co/main.dart';
 import 'package:grano_co/services/connectivity_service.dart';
 import 'package:grano_co/services/media_service.dart';
+import 'package:grano_co/services/notification_service.dart';
 
 import 'fakes.dart';
 
@@ -11,11 +12,16 @@ void main() {
     WidgetTester tester,
     FakeConnectivityService red, {
     MediaService? media,
+    NotificationService? notificaciones,
   }) async {
     tester.view.physicalSize = const Size(1080, 2400);
     tester.view.devicePixelRatio = 2.5;
     addTearDown(tester.view.reset);
-    final servicios = await serviciosDePrueba(red, media: media);
+    final servicios = await serviciosDePrueba(
+      red,
+      media: media,
+      notificaciones: notificaciones,
+    );
     await tester.pumpWidget(GranoApp(servicios: servicios));
     await tester.pumpAndSettle();
   }
@@ -139,5 +145,43 @@ void main() {
       find.textContaining('Sin permiso no podemos usar la cámara'),
       findsOneWidget,
     );
+  });
+
+  testWidgets('Confirmar un pedido dispara la notificación del canal pedidos', (
+    tester,
+  ) async {
+    final notificaciones = FakeNotificationService();
+    await abrirApp(
+      tester,
+      FakeConnectivityService(EstadoRed.enLinea),
+      notificaciones: notificaciones,
+    );
+
+    await tester.tap(find.text('Ver').first);
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextFormField), 'Edwin');
+    await tester.ensureVisible(find.text('Confirmar pedido'));
+    await tester.tap(find.text('Confirmar pedido'));
+    await tester.pumpAndSettle();
+
+    expect(notificaciones.enviadas, ['pedidos: Pedido confirmado']);
+  });
+
+  testWidgets('Perder y recuperar internet notifica en el canal conectividad', (
+    tester,
+  ) async {
+    final notificaciones = FakeNotificationService();
+    final red = FakeConnectivityService(EstadoRed.enLinea);
+    await abrirApp(tester, red, notificaciones: notificaciones);
+
+    red.cambiarA(EstadoRed.sinRed);
+    await tester.pumpAndSettle();
+    red.cambiarA(EstadoRed.enLinea);
+    await tester.pumpAndSettle();
+
+    expect(notificaciones.enviadas, [
+      'conectividad: Estás sin conexión',
+      'conectividad: Conexión restablecida',
+    ]);
   });
 }
