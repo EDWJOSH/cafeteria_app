@@ -40,13 +40,11 @@ class _HomeScreenState extends State<HomeScreen> {
         title: const Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.local_cafe),
+            Icon(Icons.eco_outlined),
             SizedBox(width: 8),
-            Text('Café Aroma', style: TextStyle(fontWeight: FontWeight.bold)),
+            Text('Grano & Co.'),
           ],
         ),
-        centerTitle: true,
-        backgroundColor: colores.primaryContainer,
       ),
       body: ListView(
         children: [
@@ -55,23 +53,23 @@ class _HomeScreenState extends State<HomeScreen> {
             height: 160,
             width: double.infinity,
             fit: BoxFit.cover,
-            semanticLabel: 'Banner de Café Aroma',
+            semanticLabel: 'Banner de Grano & Co.',
           ),
           Container(
             padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('¡Bienvenido!', style: textos.headlineSmall),
+                Text('Bienvenido a Grano & Co.', style: textos.headlineSmall),
                 const SizedBox(height: 4),
-                const Text('Elige tu bebida o postre favorito y haz tu pedido.'),
+                const Text('Café de especialidad, tostado aquí mismo. Elige y haz tu pedido.'),
                 const SizedBox(height: 12),
                 const Wrap(
                   spacing: 8,
                   runSpacing: 8,
                   children: [
                     InfoChip(icono: Icons.schedule, texto: 'Lun a Sáb, 7:00 - 20:00'),
-                    InfoChip(icono: Icons.location_on, texto: 'Centro de la ciudad'),
+                    InfoChip(icono: Icons.location_on, texto: 'Guayaquil, Ecuador'),
                   ],
                 ),
               ],

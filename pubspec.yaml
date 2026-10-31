@@ -45,6 +45,8 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.14.4
+  flutter_native_splash: ^2.4.8
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -59,6 +61,11 @@ flutter:
 
   assets:
     - assets/images/
+  fonts:
+    - family: GranoSerif
+      fonts:
+        - asset: assets/fonts/NotoSerifDisplay-Bold.ttf
+          weight: 700
 
   # To add assets to your application, add an assets section, like this:
   # assets:
@@ -90,3 +97,23 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+# Ícono de la app (rebranding Grano & Co.)
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/branding/icon.png"
+  adaptive_icon_background: "#B5543C"
+  adaptive_icon_foreground: "assets/branding/icon_foreground.png"
+  remove_alpha_ios: true
+
+# Pantalla de carga nativa (splash screen)
+flutter_native_splash:
+  color: "#F3E6D3"
+  image: assets/branding/splash_logo.png
+  branding: assets/branding/wordmark.png
+  android_12:
+    color: "#F3E6D3"
+    image: assets/branding/splash_logo.png
+    branding: assets/branding/wordmark.png
+  web: false

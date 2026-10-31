@@ -5,9 +5,9 @@ import 'package:grano_co/main.dart';
 
 void main() {
   testWidgets('La pantalla principal muestra el título y el menú', (WidgetTester tester) async {
-    await tester.pumpWidget(const CafeteriaApp());
+    await tester.pumpWidget(const GranoApp());
 
-    expect(find.text('Café Aroma'), findsOneWidget);
+    expect(find.text('Grano & Co.'), findsOneWidget);
     expect(find.text('Nuestro menú'), findsOneWidget);
     expect(find.text('Capuchino'), findsOneWidget);
   });
@@ -19,7 +19,7 @@ void main() {
     tester.view.devicePixelRatio = 2.5;
     addTearDown(tester.view.reset);
 
-    await tester.pumpWidget(const CafeteriaApp());
+    await tester.pumpWidget(const GranoApp());
 
     // Ida: tocar "Ver" en el Capuchino (segundo producto)
     await tester.tap(find.text('Ver').at(1));

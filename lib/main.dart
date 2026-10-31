@@ -1,23 +1,21 @@
 import 'package:flutter/material.dart';
 
+import 'core/theme/app_theme.dart';
 import 'screens/home_screen.dart';
 
 void main() {
-  runApp(const CafeteriaApp());
+  runApp(const GranoApp());
 }
 
-class CafeteriaApp extends StatelessWidget {
-  const CafeteriaApp({super.key});
+class GranoApp extends StatelessWidget {
+  const GranoApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Café Aroma',
+      title: 'Grano & Co.',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.brown),
-        useMaterial3: true,
-      ),
+      theme: AppTheme.claro,
       home: const HomeScreen(),
     );
   }
