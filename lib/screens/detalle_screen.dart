@@ -44,7 +44,7 @@ class _DetalleScreenState extends State<DetalleScreen> {
     final total = producto.precio * _cantidad;
 
     return Scaffold(
-      appBar: AppBar(title: Text(producto.nombre), backgroundColor: colores.primaryContainer),
+      appBar: AppBar(title: Text(producto.nombre)),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(

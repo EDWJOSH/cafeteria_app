@@ -1,4 +1,4 @@
-package com.edwinquiroz.cafeteria_app
+package com.edwinquiroz.granoco
 
 import io.flutter.embedding.android.FlutterActivity
 

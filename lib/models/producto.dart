@@ -19,7 +19,7 @@ class Producto {
   });
 }
 
-/// Productos de ejemplo del menú de Café Aroma.
+/// Productos de ejemplo del menú de Grano & Co.
 const List<Producto> catalogo = [
   Producto(
     id: 1,
