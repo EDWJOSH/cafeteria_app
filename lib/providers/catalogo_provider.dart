@@ -26,7 +26,13 @@ class CatalogoProvider extends ChangeNotifier {
     final primeraVez = _enLinea == null;
     final reconecto = _enLinea == false && enLinea;
     _enLinea = enLinea;
-    if (primeraVez || reconecto) Future.microtask(cargar);
+    if (primeraVez || reconecto) {
+      Future.microtask(cargar);
+    } else if (!enLinea && _origen == OrigenCatalogo.red) {
+      // Sin red, lo que se ve ya es la copia guardada en el equipo.
+      _origen = OrigenCatalogo.cache;
+      Future.microtask(notifyListeners);
+    }
   }
 
   Future<void> cargar() async {

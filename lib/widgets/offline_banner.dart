@@ -22,7 +22,7 @@ class OfflineBanner extends StatelessWidget {
         ? 'Conectado, pero sin acceso a internet'
         : 'Sin conexión a internet';
     final detalle = switch (catalogo.origen) {
-      OrigenCatalogo.red || OrigenCatalogo.cache =>
+      OrigenCatalogo.cache =>
         'Mostrando el menú guardado el ${formatearFecha(catalogo.actualizado!)}',
       _ => 'Mostrando el menú básico incluido en la app',
     };

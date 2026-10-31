@@ -67,6 +67,7 @@ void main() {
       findsOneWidget,
     );
     expect(find.text('Cold brew de la casa'), findsOneWidget);
+    expect(find.textContaining('Menú guardado en el equipo'), findsOneWidget);
 
     red.cambiarA(EstadoRed.enLinea);
     await tester.pumpAndSettle();
