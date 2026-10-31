@@ -47,13 +47,21 @@ class AppTheme {
         ),
       ),
       textTheme: const TextTheme(
-        headlineSmall: TextStyle(fontFamily: fuenteTitulos, color: AppColors.espresso),
-        titleLarge: TextStyle(fontFamily: fuenteTitulos, color: AppColors.espresso),
+        headlineSmall: TextStyle(
+          fontFamily: fuenteTitulos,
+          color: AppColors.espresso,
+        ),
+        titleLarge: TextStyle(
+          fontFamily: fuenteTitulos,
+          color: AppColors.espresso,
+        ),
       ),
       cardTheme: const CardThemeData(
         color: AppColors.blanco,
         elevation: 1,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(16))),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(16)),
+        ),
       ),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
