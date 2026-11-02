@@ -5,18 +5,21 @@ plugins {
 }
 
 android {
-    namespace = "com.edwinquiroz.cafeteria_app"
-    compileSdk = flutter.compileSdkVersion
+    namespace = "com.edwinquiroz.granoco"
+    // permission_handler 13 exige compilar contra la API 37
+    compileSdk = 37
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
+        // Requerido por flutter_local_notifications
+        isCoreLibraryDesugaringEnabled = true
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.edwinquiroz.cafeteria_app"
+        // Identificador único de la app (rebranding: antes com.edwinquiroz.cafeteria_app)
+        applicationId = "com.edwinquiroz.granoco"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
@@ -46,4 +49,8 @@ kotlin {
 
 flutter {
     source = "../.."
+}
+
+dependencies {
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
 }

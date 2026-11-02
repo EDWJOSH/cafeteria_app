@@ -1,30 +1,91 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:grano_co/main.dart';
+import 'package:grano_co/services/connectivity_service.dart';
+import 'package:grano_co/services/media_service.dart';
+import 'package:grano_co/services/notification_service.dart';
 
-import 'package:cafeteria_app/main.dart';
+import 'fakes.dart';
 
 void main() {
-  testWidgets('La pantalla principal muestra el título y el menú', (WidgetTester tester) async {
-    await tester.pumpWidget(const CafeteriaApp());
-
-    expect(find.text('Café Aroma'), findsOneWidget);
-    expect(find.text('Nuestro menú'), findsOneWidget);
-    expect(find.text('Capuchino'), findsOneWidget);
-  });
-
-  testWidgets('Navega al detalle con el producto y regresa con el pedido', (
+  Future<void> abrirApp(
     WidgetTester tester,
-  ) async {
+    FakeConnectivityService red, {
+    MediaService? media,
+    NotificationService? notificaciones,
+  }) async {
     tester.view.physicalSize = const Size(1080, 2400);
     tester.view.devicePixelRatio = 2.5;
     addTearDown(tester.view.reset);
-
-    await tester.pumpWidget(const CafeteriaApp());
-
-    // Ida: tocar "Ver" en el Capuchino (segundo producto)
-    await tester.tap(find.text('Ver').at(1));
+    final servicios = await serviciosDePrueba(
+      red,
+      media: media,
+      notificaciones: notificaciones,
+    );
+    await tester.pumpWidget(GranoApp(servicios: servicios));
     await tester.pumpAndSettle();
-    expect(find.text('Parámetro recibido desde Home: producto #2 - Capuchino'), findsOneWidget);
+  }
+
+  testWidgets('Con internet muestra el menú descargado de la red', (
+    tester,
+  ) async {
+    await abrirApp(tester, FakeConnectivityService(EstadoRed.enLinea));
+
+    expect(find.text('Grano & Co.'), findsOneWidget);
+    expect(find.text('Cold brew de la casa'), findsOneWidget);
+    expect(
+      find.textContaining('Menú actualizado desde internet'),
+      findsOneWidget,
+    );
+    expect(find.text('Sin conexión a internet'), findsNothing);
+  });
+
+  testWidgets('Sin internet muestra el banner offline y el menú básico', (
+    tester,
+  ) async {
+    await abrirApp(tester, FakeConnectivityService(EstadoRed.sinRed));
+
+    expect(find.text('Sin conexión a internet'), findsOneWidget);
+    expect(
+      find.text('Mostrando el menú básico incluido en la app'),
+      findsOneWidget,
+    );
+    expect(find.text('Cold brew de la casa'), findsNothing);
+  });
+
+  testWidgets('Al perder la red usa la caché y al volver se recarga', (
+    tester,
+  ) async {
+    final red = FakeConnectivityService(EstadoRed.enLinea);
+    await abrirApp(tester, red);
+
+    red.cambiarA(EstadoRed.sinRed);
+    await tester.pumpAndSettle();
+    expect(find.text('Sin conexión a internet'), findsOneWidget);
+    expect(
+      find.textContaining('Mostrando el menú guardado el'),
+      findsOneWidget,
+    );
+    expect(find.text('Cold brew de la casa'), findsOneWidget);
+    expect(find.textContaining('Menú guardado en el equipo'), findsOneWidget);
+
+    red.cambiarA(EstadoRed.enLinea);
+    await tester.pumpAndSettle();
+    expect(find.text('Sin conexión a internet'), findsNothing);
+  });
+
+  testWidgets('Navega al detalle con el producto y regresa con el pedido', (
+    tester,
+  ) async {
+    await abrirApp(tester, FakeConnectivityService(EstadoRed.enLinea));
+
+    // Ida: tocar "Ver" en el Capuchino (primer producto del catálogo remoto)
+    await tester.tap(find.text('Ver').first);
+    await tester.pumpAndSettle();
+    expect(
+      find.text('Parámetro recibido desde Home: producto #2 - Capuchino'),
+      findsOneWidget,
+    );
 
     // Sin nombre el formulario no deja confirmar
     await tester.ensureVisible(find.text('Confirmar pedido'));
@@ -41,6 +102,87 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Último pedido'), findsOneWidget);
-    expect(find.text('Edwin pidió 2 x Capuchino (Mediano) - Total \$5.00'), findsOneWidget);
+    expect(
+      find.text('Edwin pidió 2 x Capuchino (Mediano) - Total \$5.00'),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('Permiso de cámara bloqueado: ofrece abrir los ajustes', (
+    tester,
+  ) async {
+    final media = FakeMediaService(EstadoPermiso.denegadoPermanente);
+    await abrirApp(
+      tester,
+      FakeConnectivityService(EstadoRed.enLinea),
+      media: media,
+    );
+
+    await tester.tap(find.byTooltip('Mi perfil'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Tomar foto'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Permiso de cámara bloqueado'), findsOneWidget);
+    await tester.tap(find.text('Abrir ajustes'));
+    await tester.pumpAndSettle();
+    expect(media.ajustesAbiertos, isTrue);
+  });
+
+  testWidgets('Permiso de cámara denegado: muestra un aviso', (tester) async {
+    final media = FakeMediaService(EstadoPermiso.denegado);
+    await abrirApp(
+      tester,
+      FakeConnectivityService(EstadoRed.enLinea),
+      media: media,
+    );
+
+    await tester.tap(find.byTooltip('Mi perfil'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Tomar foto'));
+    await tester.pump();
+
+    expect(
+      find.textContaining('Sin permiso no podemos usar la cámara'),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('Confirmar un pedido dispara la notificación del canal pedidos', (
+    tester,
+  ) async {
+    final notificaciones = FakeNotificationService();
+    await abrirApp(
+      tester,
+      FakeConnectivityService(EstadoRed.enLinea),
+      notificaciones: notificaciones,
+    );
+
+    await tester.tap(find.text('Ver').first);
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextFormField), 'Edwin');
+    await tester.ensureVisible(find.text('Confirmar pedido'));
+    await tester.tap(find.text('Confirmar pedido'));
+    await tester.pumpAndSettle();
+
+    expect(notificaciones.enviadas, ['pedidos: Pedido confirmado']);
+  });
+
+  testWidgets('Perder y recuperar internet notifica en el canal conectividad', (
+    tester,
+  ) async {
+    final notificaciones = FakeNotificationService();
+    final red = FakeConnectivityService(EstadoRed.enLinea);
+    await abrirApp(tester, red, notificaciones: notificaciones);
+
+    red.cambiarA(EstadoRed.sinRed);
+    await tester.pumpAndSettle();
+    red.cambiarA(EstadoRed.enLinea);
+    await tester.pumpAndSettle();
+
+    expect(notificaciones.enviadas, [
+      'conectividad: Estás sin conexión',
+      'conectividad: Conexión restablecida',
+    ]);
   });
 }

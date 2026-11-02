@@ -44,7 +44,7 @@ class _DetalleScreenState extends State<DetalleScreen> {
     final total = producto.precio * _cantidad;
 
     return Scaffold(
-      appBar: AppBar(title: Text(producto.nombre), backgroundColor: colores.primaryContainer),
+      appBar: AppBar(title: Text(producto.nombre)),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -66,13 +66,23 @@ class _DetalleScreenState extends State<DetalleScreen> {
             Center(
               child: Container(
                 padding: const EdgeInsets.all(24),
-                decoration: BoxDecoration(color: colores.primaryContainer, shape: BoxShape.circle),
-                child: Icon(producto.icono, size: 64, color: colores.onPrimaryContainer),
+                decoration: BoxDecoration(
+                  color: colores.primaryContainer,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  producto.icono,
+                  size: 64,
+                  color: colores.onPrimaryContainer,
+                ),
               ),
             ),
             const SizedBox(height: 16),
             Text(producto.nombre, style: textos.headlineSmall),
-            Text(producto.categoria, style: textos.labelLarge?.copyWith(color: colores.secondary)),
+            Text(
+              producto.categoria,
+              style: textos.labelLarge?.copyWith(color: colores.secondary),
+            ),
             const SizedBox(height: 8),
             Text(producto.descripcion),
             const SizedBox(height: 8),
@@ -109,8 +119,14 @@ class _DetalleScreenState extends State<DetalleScreen> {
                       border: OutlineInputBorder(),
                     ),
                     items: const [
-                      DropdownMenuItem(value: 'Pequeño', child: Text('Pequeño')),
-                      DropdownMenuItem(value: 'Mediano', child: Text('Mediano')),
+                      DropdownMenuItem(
+                        value: 'Pequeño',
+                        child: Text('Pequeño'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'Mediano',
+                        child: Text('Mediano'),
+                      ),
                       DropdownMenuItem(value: 'Grande', child: Text('Grande')),
                     ],
                     onChanged: (valor) => setState(() => _tamano = valor!),
@@ -122,7 +138,9 @@ class _DetalleScreenState extends State<DetalleScreen> {
                       const Spacer(),
                       IconButton(
                         tooltip: 'Quitar uno',
-                        onPressed: _cantidad > 1 ? () => setState(() => _cantidad--) : null,
+                        onPressed: _cantidad > 1
+                            ? () => setState(() => _cantidad--)
+                            : null,
                         icon: const Icon(Icons.remove_circle_outline),
                       ),
                       Text('$_cantidad', style: textos.titleMedium),
@@ -137,7 +155,10 @@ class _DetalleScreenState extends State<DetalleScreen> {
               ),
             ),
             const SizedBox(height: 8),
-            Text('Total: \$${total.toStringAsFixed(2)}', style: textos.titleLarge),
+            Text(
+              'Total: \$${total.toStringAsFixed(2)}',
+              style: textos.titleLarge,
+            ),
             const SizedBox(height: 16),
             SizedBox(
               width: double.infinity,

@@ -1,5 +1,5 @@
-name: cafeteria_app
-description: "A new Flutter project."
+name: grano_co
+description: "Grano & Co. - Catálogo móvil de cafetería de especialidad."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -16,7 +16,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.0+1
+version: 2.0.0+2
 
 environment:
   sdk: ^3.13.7
@@ -34,6 +34,16 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
+  provider: ^6.1.5+1
+  connectivity_plus: ^7.3.2
+  shared_preferences: ^2.5.6
+  http: ^1.6.0
+  permission_handler: ^13.0.2
+  image_picker: ^1.2.4
+  image_cropper: ^13.0.0
+  flutter_image_compress: ^2.5.1
+  path_provider: ^2.1.6
+  flutter_local_notifications: ^22.3.3
 
 dev_dependencies:
   flutter_test:
@@ -45,6 +55,8 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.14.4
+  flutter_native_splash: ^2.4.8
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -59,6 +71,11 @@ flutter:
 
   assets:
     - assets/images/
+  fonts:
+    - family: GranoSerif
+      fonts:
+        - asset: assets/fonts/NotoSerifDisplay-Bold.ttf
+          weight: 700
 
   # To add assets to your application, add an assets section, like this:
   # assets:
@@ -90,3 +107,23 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+# Ícono de la app (rebranding Grano & Co.)
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/branding/icon.png"
+  adaptive_icon_background: "#B5543C"
+  adaptive_icon_foreground: "assets/branding/icon_foreground.png"
+  remove_alpha_ios: true
+
+# Pantalla de carga nativa (splash screen)
+flutter_native_splash:
+  color: "#F3E6D3"
+  image: assets/branding/splash_logo.png
+  branding: assets/branding/wordmark.png
+  android_12:
+    color: "#F3E6D3"
+    image: assets/branding/splash_logo.png
+    branding: assets/branding/wordmark.png
+  web: false
