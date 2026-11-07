@@ -5,11 +5,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'core/theme/app_theme.dart';
 import 'data/catalogo_repository.dart';
 import 'providers/catalogo_provider.dart';
+import 'providers/clima_provider.dart';
 import 'providers/conectividad_provider.dart';
 import 'providers/pedido_provider.dart';
 import 'providers/perfil_provider.dart';
 import 'screens/home_screen.dart';
 import 'services/cache_service.dart';
+import 'services/clima_api_service.dart';
 import 'services/connectivity_service.dart';
 import 'services/media_service.dart';
 import 'services/notification_service.dart';
@@ -22,6 +24,7 @@ class Servicios {
   final CatalogoRepository catalogo;
   final MediaService media;
   final NotificationService notificaciones;
+  final ClimaApiService clima;
 
   Servicios({
     required this.cache,
@@ -29,6 +32,7 @@ class Servicios {
     required this.catalogo,
     required this.media,
     required this.notificaciones,
+    required this.clima,
   });
 }
 
@@ -46,6 +50,7 @@ Future<void> main() async {
         catalogo: CatalogoRepository(cache),
         media: MediaService(),
         notificaciones: notificaciones,
+        clima: ClimaApiService(),
       ),
     ),
   );
@@ -82,6 +87,7 @@ class GranoApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (_) => PerfilProvider(servicios.media, servicios.cache),
         ),
+        ChangeNotifierProvider(create: (_) => ClimaProvider(servicios.clima)),
         ChangeNotifierProxyProvider<ConectividadProvider, CatalogoProvider>(
           create: (_) => CatalogoProvider(servicios.catalogo),
           update: (_, conexion, catalogo) => catalogo!
