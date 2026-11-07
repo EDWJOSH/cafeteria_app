@@ -12,6 +12,7 @@ import '../providers/perfil_provider.dart';
 import '../widgets/info_chip.dart';
 import '../widgets/offline_banner.dart';
 import '../widgets/producto_card.dart';
+import 'clima_screen.dart';
 import 'detalle_screen.dart';
 import 'perfil_screen.dart';
 
@@ -145,6 +146,35 @@ class _HomeScreenState extends State<HomeScreen> {
                           ],
                         ),
                       ],
+                    ),
+                  ),
+                  Card(
+                    margin: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                    color: AppColors.espresso,
+                    child: ListTile(
+                      leading: const Icon(
+                        Icons.wb_sunny_outlined,
+                        color: AppColors.crema,
+                      ),
+                      title: const Text(
+                        'Clima y antojo',
+                        style: TextStyle(
+                          color: AppColors.crema,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      subtitle: const Text(
+                        '¿Frío o caliente? Te recomendamos según el clima de hoy',
+                        style: TextStyle(color: AppColors.arena),
+                      ),
+                      trailing: const Icon(
+                        Icons.chevron_right,
+                        color: AppColors.crema,
+                      ),
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const ClimaScreen()),
+                      ),
                     ),
                   ),
                   if (ultimoPedido != null)
