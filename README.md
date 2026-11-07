@@ -1,18 +1,69 @@
 # Grano & Co. — Catálogo móvil de café de especialidad
 
 Aplicación Flutter para el catálogo y los pedidos de una cafetería de especialidad.
-Es la **versión 2.0**: reingeniería del prototipo *Café Aroma* (Actividad Integradora 1)
-con rebranding completo y un módulo de servicios nativos.
+Es la **versión 2.1**: reingeniería del prototipo *Café Aroma* (Actividad Integradora 1),
+con rebranding y servicios nativos (Actividad Integradora 2) y consumo de una API REST
+pública (Actividad Integradora 3).
 
-Actividad Integradora 2 — Desarrollo de Aplicaciones Móviles · Universidad Ecotec
+Desarrollo de Aplicaciones Móviles · Universidad Ecotec
 
-📄 **Informe técnico:** [docs/Quiroz_Edwin_ActividadIntegradora2.pdf](docs/Quiroz_Edwin_ActividadIntegradora2.pdf)
+📄 **Informes técnicos:** [Actividad 2](docs/Quiroz_Edwin_ActividadIntegradora2.pdf) ·
+[Actividad 3](docs/Quiroz_Edwin_ActividadIntegradora3.pdf)
+
+## Novedad de la versión 2.1: API pública del clima
+
+La pantalla **Clima y antojo** consume la API REST pública y gratuita de
+[Open-Meteo](https://open-meteo.com/) (no requiere registro ni token). Muestra el clima
+actual y el pronóstico de 5 días de Guayaquil y, según la temperatura, recomienda bebidas
+frías (desde 26 °C) o calientes del menú.
+
+| Cargando | Datos cargados | Error de red |
+|---|---|---|
+| ![](docs/capturas/clima_cargando.jpg) | ![](docs/capturas/clima_exito.jpg) | ![](docs/capturas/clima_error.jpg) |
+
+**Endpoint consumido (GET):**
+
+```
+https://api.open-meteo.com/v1/forecast?latitude=-2.19&longitude=-79.89
+  &current=temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,wind_speed_10m
+  &daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max
+  &timezone=America/Guayaquil&forecast_days=5
+```
+
+**Estructura del JSON (recortada):**
+
+```json
+{
+  "timezone": "America/Guayaquil",
+  "current": {
+    "time": "2026-11-07T10:45", "temperature_2m": 29.2, "apparent_temperature": 36.0,
+    "relative_humidity_2m": 69, "weather_code": 1, "wind_speed_10m": 1.4
+  },
+  "daily": {
+    "time": ["2026-11-07", "2026-11-08"],
+    "weather_code": [80, 53],
+    "temperature_2m_max": [30.9, 32.9],
+    "temperature_2m_min": [24.1, 24.2],
+    "precipitation_probability_max": [98, 63]
+  }
+}
+```
+
+| Capa | Archivo | Responsabilidad |
+|---|---|---|
+| Servicio | `lib/services/clima_api_service.dart` | GET con `http`, límite de 10 s y errores convertidos en `ClimaException` |
+| Modelo | `lib/models/clima.dart` | `Clima`, `ClimaActual` y `PronosticoDia` con `fromJson` / `toJson` |
+| Estado | `lib/providers/clima_provider.dart` | Provider con los estados `cargando`, `exito` y `error` |
+| Interfaz | `lib/screens/clima_screen.dart` | Tarjetas, recomendación, pull-to-refresh y botón *Reintentar* |
+
+Para verla: Home → tarjeta **Clima y antojo**. Para actualizar, deslizar hacia abajo.
+Datos del clima: Open-Meteo.com, licencia CC BY 4.0.
 
 | Splash | Home | Sin conexión | Permiso bloqueado | Foto de perfil | Notificación |
 |---|---|---|---|---|---|
 | ![](docs/capturas/splash.jpg) | ![](docs/capturas/home.jpg) | ![](docs/capturas/offline.jpg) | ![](docs/capturas/permiso_bloqueado.jpg) | ![](docs/capturas/foto_perfil.jpg) | ![](docs/capturas/notificacion_pedido.jpg) |
 
-## Novedades de la versión 2.0
+## Versión 2.0: rebranding y servicios nativos
 
 ### Rebranding
 
@@ -85,19 +136,21 @@ lib/
 ├── core/
 │   ├── theme/app_theme.dart       # Paleta y tema únicos de la marca
 │   └── utils/formato.dart         # Formato de fechas y tamaños
-├── models/producto.dart           # Modelo serializable (fromJson / toJson)
+├── models/                        # Producto y Clima (fromJson / toJson)
 ├── data/catalogo_repository.dart  # Red -> caché -> menú básico
 ├── services/                      # Servicios nativos (sin código de interfaz)
+│   ├── clima_api_service.dart     # API REST de Open-Meteo
 │   ├── connectivity_service.dart
 │   ├── media_service.dart
 │   ├── notification_service.dart
 │   └── cache_service.dart
 ├── providers/                     # Estado de la app (ChangeNotifier)
+│   ├── clima_provider.dart
 │   ├── conectividad_provider.dart
 │   ├── catalogo_provider.dart
 │   ├── pedido_provider.dart
 │   └── perfil_provider.dart
-├── screens/                       # Home, Detalle y Mi perfil
+├── screens/                       # Home, Detalle, Mi perfil y Clima y antojo
 └── widgets/                       # ProductoCard, InfoChip, OfflineBanner
 ```
 
@@ -148,20 +201,23 @@ flutter analyze
 flutter test
 ```
 
-Hay 8 pruebas de widget con servicios falsos que cubren: menú descargado de la red, modo
-offline, pérdida y recuperación de la conexión, navegación con paso de parámetros,
-permiso de cámara denegado y bloqueado, y las notificaciones de pedidos y de conexión.
+Hay 15 pruebas con servicios falsos. Cubren el menú descargado de la red, el modo
+offline, la pérdida y recuperación de la conexión, la navegación con paso de parámetros,
+el permiso de cámara denegado y bloqueado, y las notificaciones de pedidos y de conexión.
+Para la API del clima cubren el mapeo `fromJson` / `toJson`, los errores HTTP, de red y de JSON,
+y los estados Cargando → Éxito y Error → Reintentar.
 
 ## Flujo de ramas
 
 | Rama | Propósito |
 |---|---|
-| `main` | Versión estable publicada (v2.0 con rebranding) |
+| `main` | Versión estable publicada |
 | `develop` | Integración de las funcionalidades |
 | `feature/rebranding` | Nombre, identificador, ícono, splash y paleta |
 | `feature/conectividad` | Detección de red, caché y banner offline |
 | `feature/camara-permisos` | Cámara, galería, permisos, recorte y compresión |
 | `feature/notificaciones` | Canales y notificaciones locales |
+| `feature/api-integration` | Consumo de la API de Open-Meteo y pantalla Clima y antojo |
 
 Cada `feature/*` se integra en `develop` con `merge --no-ff`, y `develop` se integra en `main`
 al cerrar la versión.
