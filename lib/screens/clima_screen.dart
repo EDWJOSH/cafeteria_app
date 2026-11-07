@@ -233,12 +233,19 @@ class _TarjetaActual extends StatelessWidget {
               children: [
                 Icon(desc.icono, size: 56, color: AppColors.crema),
                 const SizedBox(width: 16),
-                Text(
-                  '${actual.temperatura.toStringAsFixed(1)} °C',
-                  style: const TextStyle(
-                    fontFamily: AppTheme.fuenteTitulos,
-                    fontSize: 44,
-                    color: AppColors.crema,
+                // FittedBox reduce el número en pantallas angostas.
+                Flexible(
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      '${actual.temperatura.toStringAsFixed(1)} °C',
+                      style: const TextStyle(
+                        fontFamily: AppTheme.fuenteTitulos,
+                        fontSize: 44,
+                        color: AppColors.crema,
+                      ),
+                    ),
                   ),
                 ),
               ],
