@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:grano_co/data/catalogo_repository.dart';
 import 'package:grano_co/main.dart';
 import 'package:grano_co/services/cache_service.dart';
+import 'package:grano_co/services/clima_api_service.dart';
 import 'package:grano_co/services/connectivity_service.dart';
 import 'package:grano_co/services/media_service.dart';
 import 'package:grano_co/services/notification_service.dart';
@@ -90,10 +91,35 @@ http.Client clienteFalso() => MockClient((request) async {
   return http.Response.bytes(utf8.encode(json), 200);
 });
 
+/// Respuesta real de Open-Meteo recortada (misma estructura que la API).
+const climaJsonDePrueba = '''
+{
+  "timezone": "America/Guayaquil",
+  "current": {"time": "2026-11-07T10:45", "temperature_2m": 29.2,
+    "apparent_temperature": 36.0, "relative_humidity_2m": 69,
+    "weather_code": 1, "wind_speed_10m": 1.4},
+  "daily": {
+    "time": ["2026-11-07", "2026-11-08", "2026-11-09"],
+    "weather_code": [80, 53, 3],
+    "temperature_2m_max": [30.9, 32.9, 31.2],
+    "temperature_2m_min": [24.1, 24.2, 24.6],
+    "precipitation_probability_max": [45, 20, 5]
+  }
+}
+''';
+
+/// Servicio de clima con un servidor falso que responde [climaJsonDePrueba].
+ClimaApiService climaFalso() => ClimaApiService(
+  cliente: MockClient(
+    (request) async => http.Response.bytes(utf8.encode(climaJsonDePrueba), 200),
+  ),
+);
+
 Future<Servicios> serviciosDePrueba(
   FakeConnectivityService conectividad, {
   MediaService? media,
   NotificationService? notificaciones,
+  ClimaApiService? clima,
 }) async {
   SharedPreferences.setMockInitialValues({});
   final cache = CacheService(await SharedPreferences.getInstance());
@@ -103,5 +129,6 @@ Future<Servicios> serviciosDePrueba(
     catalogo: CatalogoRepository(cache, cliente: clienteFalso()),
     media: media ?? FakeMediaService(),
     notificaciones: notificaciones ?? FakeNotificationService(),
+    clima: clima ?? climaFalso(),
   );
 }
